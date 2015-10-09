@@ -6,6 +6,7 @@ use Matthias\BundlePlugins\BundlePlugin;
 use Matthias\BundlePlugins\ExtensionWithPlugins;
 use Puli\Discovery\Api\Discovery;
 use Puli\Discovery\Binding\ClassBinding;
+use Puli\Repository\Api\ResourceRepository;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Webmozart\Expression\Expr;
@@ -33,7 +34,11 @@ abstract class PuliBundleWithPlugins extends Bundle
      */
     abstract protected function getAlias();
 
-    final public function __construct(Discovery $discovery)
+    /**
+     * @param Discovery          $discovery
+     * @param ResourceRepository $repository
+     */
+    final public function __construct(Discovery $discovery, ResourceRepository $repository)
     {
         $expr = Expr::method('getParameterValue', 'bundle-alias', Expr::same($this->getAlias()));
 
@@ -51,8 +56,17 @@ abstract class PuliBundleWithPlugins extends Bundle
         /** @var ClassBinding $binding */
         foreach ($classBindings as $binding) {
             $pluginClass = $binding->getClassName();
+            $plugin = new $pluginClass();
 
-            $this->registerPlugin(new $pluginClass());
+            if ($plugin instanceof DiscoveryAwareInterface) {
+                $plugin->setDiscovery($discovery);
+            }
+
+            if ($plugin instanceof ResourceRepositoryAwareInterface) {
+                $plugin->setRepository($repository);
+            }
+
+            $this->registerPlugin($plugin);
         }
     }
 

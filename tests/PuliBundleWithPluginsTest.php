@@ -6,11 +6,13 @@ use Matthias\BundlePlugins\BundlePlugin;
 use Mi\PuliBundlePlugins\Tests\Fixtures\NormalPlugin;
 use Mi\PuliBundlePlugins\Tests\Fixtures\PriorityPlugin;
 use Mi\PuliBundlePlugins\Tests\Fixtures\TestPuliBundleWithPlugins;
+use Puli\Discovery\Api\Discovery;
 use Puli\Discovery\Api\Type\BindingParameter;
 use Puli\Discovery\Api\Type\BindingType;
 use Puli\Discovery\Binding\ClassBinding;
 use Puli\Discovery\Binding\Initializer\ResourceBindingInitializer;
 use Puli\Discovery\InMemoryDiscovery;
+use Puli\Repository\Api\ResourceRepository;
 use Puli\Repository\FilesystemRepository;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -22,13 +24,23 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 class PuliBundleWithPluginsTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @var Discovery
+     */
+    private $discovery;
+
+    /**
+     * @var ResourceRepository
+     */
+    private $repo;
+
+    /**
      * @test
      */
     public function build_the_plugins()
     {
         $container = new ContainerBuilder();
 
-        $bundle = new TestPuliBundleWithPlugins($this->getDiscoery());
+        $bundle = $this->getBundle();
 
         $bundle->build($container);
 
@@ -43,7 +55,7 @@ class PuliBundleWithPluginsTest extends \PHPUnit_Framework_TestCase
     {
         $container = new ContainerBuilder();
 
-        $bundle = new TestPuliBundleWithPlugins($this->getDiscoery());
+        $bundle = $this->getBundle();
         $bundle->setContainer($container);
         $bundle->boot();
 
@@ -56,9 +68,7 @@ class PuliBundleWithPluginsTest extends \PHPUnit_Framework_TestCase
      */
     public function sort_the_plugins_correct()
     {
-        $discovery = $this->getDiscoery();
-
-        $bundle = new TestPuliBundleWithPlugins($discovery);
+        $bundle = $this->getBundle();
 
         $extension = $bundle->getContainerExtension();
 
@@ -68,19 +78,35 @@ class PuliBundleWithPluginsTest extends \PHPUnit_Framework_TestCase
 
         $registeredPlugins = $registeredPluginsReflection->getValue($extension);
 
-        self::assertEquals(NormalPlugin::class, $discovery->findBindings(BundlePlugin::class)[0]->getClassName());
+        self::assertEquals(NormalPlugin::class, $this->discovery->findBindings(BundlePlugin::class)[0]->getClassName());
         self::assertInstanceOf(PriorityPlugin::class, $registeredPlugins[0]);
     }
 
     /**
-     * @return InMemoryDiscovery
+     * @test
      */
-    private function getDiscoery()
+    public function set_the_repository_and_discovery_for_the_aware_interfaces()
     {
-        $repo = new FilesystemRepository(__DIR__, true);
+        $bundle = $this->getBundle();
 
-        $discovery = new InMemoryDiscovery([new ResourceBindingInitializer($repo)]);
-        $discovery->addBindingType(
+        $extension = $bundle->getContainerExtension();
+
+        $registeredPluginsReflection = new \ReflectionProperty($extension, 'registeredPlugins');
+
+        $registeredPluginsReflection->setAccessible(true);
+
+        $registeredPlugins = $registeredPluginsReflection->getValue($extension);
+
+        self::assertEquals($this->repo, $registeredPlugins[0]->getRepository());
+        self::assertEquals($this->discovery, $registeredPlugins[1]->getDiscovery());
+    }
+
+    protected function setUp()
+    {
+        $this->repo = new FilesystemRepository(__DIR__, true);
+
+        $this->discovery = new InMemoryDiscovery([new ResourceBindingInitializer($this->repo)]);
+        $this->discovery->addBindingType(
             new BindingType(
                 BundlePlugin::class,
                 [
@@ -89,7 +115,7 @@ class PuliBundleWithPluginsTest extends \PHPUnit_Framework_TestCase
                 ]
             )
         );
-        $discovery->addBinding(
+        $this->discovery->addBinding(
             new ClassBinding(
                 NormalPlugin::class,
                 BundlePlugin::class,
@@ -98,7 +124,7 @@ class PuliBundleWithPluginsTest extends \PHPUnit_Framework_TestCase
 
         );
 
-        $discovery->addBinding(
+        $this->discovery->addBinding(
             new ClassBinding(
                 NormalPlugin::class,
                 BundlePlugin::class,
@@ -107,7 +133,7 @@ class PuliBundleWithPluginsTest extends \PHPUnit_Framework_TestCase
 
         );
 
-        $discovery->addBinding(
+        $this->discovery->addBinding(
             new ClassBinding(
                 PriorityPlugin::class,
                 BundlePlugin::class,
@@ -115,6 +141,11 @@ class PuliBundleWithPluginsTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        return $discovery;
+        return $this->discovery;
+    }
+
+    private function getBundle()
+    {
+        return new TestPuliBundleWithPlugins($this->discovery, $this->repo);
     }
 }
