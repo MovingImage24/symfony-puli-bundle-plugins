@@ -19,6 +19,4 @@ class TestServicePlugin extends ServiceBundlePlugin
     {
         return 'name';
     }
-
-
 }

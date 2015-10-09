@@ -25,7 +25,6 @@ class PriorityPlugin extends SimpleBundlePlugin implements ResourceRepositoryAwa
         return $this->repository;
     }
 
-
     public function name()
     {
         return 'priority';

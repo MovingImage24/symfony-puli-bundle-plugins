@@ -25,7 +25,6 @@ class NormalPlugin extends SimpleBundlePlugin implements DiscoveryAwareInterface
         return $this->discovery;
     }
 
-
     public function name()
     {
         return 'normal';
