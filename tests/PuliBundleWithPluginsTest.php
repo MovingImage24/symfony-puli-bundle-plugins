@@ -34,7 +34,6 @@ class PuliBundleWithPluginsTest extends \PHPUnit_Framework_TestCase
 
         self::assertTrue($container->hasParameter('normal.build'));
         self::assertTrue($container->hasParameter('priority.build'));
-
     }
 
     /**
@@ -86,7 +85,7 @@ class PuliBundleWithPluginsTest extends \PHPUnit_Framework_TestCase
                 BundlePlugin::class,
                 [
                     new BindingParameter('bundle-alias', BindingParameter::REQUIRED),
-                    new BindingParameter('priority', BindingParameter::OPTIONAL, 0)
+                    new BindingParameter('priority', BindingParameter::OPTIONAL, 0),
                 ]
             )
         );

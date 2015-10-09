@@ -16,5 +16,4 @@ class TestPuliBundleWithPlugins extends PuliBundleWithPlugins
     {
         return 'test';
     }
-
 }

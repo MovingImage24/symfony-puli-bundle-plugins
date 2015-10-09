@@ -29,5 +29,4 @@ class NormalPlugin extends SimpleBundlePlugin
     {
         $container->setParameter('normal.boot', true);
     }
-
 }

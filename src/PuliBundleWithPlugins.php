@@ -38,7 +38,7 @@ abstract class PuliBundleWithPlugins extends Bundle
         $expr = Expr::method('getParameterValue', 'bundle-alias', Expr::same($this->getAlias()));
 
         $classBindings = $discovery->findBindings(BundlePlugin::class, $expr);
-        $sortBindingsByPriority = function(ClassBinding $a, ClassBinding $b) {
+        $sortBindingsByPriority = function (ClassBinding $a, ClassBinding $b) {
             if ($a->getParameterValue('priority') === $b->getParameterValue('priority')) {
                 return 0;
             }
@@ -57,7 +57,7 @@ abstract class PuliBundleWithPlugins extends Bundle
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     final public function build(ContainerBuilder $container)
     {
@@ -67,7 +67,7 @@ abstract class PuliBundleWithPlugins extends Bundle
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     final public function boot()
     {
@@ -77,7 +77,7 @@ abstract class PuliBundleWithPlugins extends Bundle
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     final public function getContainerExtension()
     {

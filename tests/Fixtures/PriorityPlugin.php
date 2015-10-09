@@ -29,5 +29,4 @@ class PriorityPlugin extends SimpleBundlePlugin
     {
         $container->setParameter('priority.boot', true);
     }
-
 }
