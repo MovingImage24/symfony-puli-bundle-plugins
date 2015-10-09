@@ -1,0 +1,22 @@
+{
+    "version": "1.0",
+    "name": "mi/symfony-puli-bundle-plugins",
+    "binding-types": {
+        "Matthias\\BundlePlugins\\BundlePlugin": {
+            "description": "A BundlePlugin Instance",
+            "parameters": {
+                "bundle-alias": {
+                    "description": "The bundle alias name is used to register the plugin for the right bundle.",
+                    "required": true
+                },
+                "priority": {
+                    "description": "The priority is used to register a plugin before after plugins, for example to load services.",
+                    "default": 0
+                }
+            }
+        },
+        "mi/service": {
+            "description": "A file with service configs"
+        }
+    }
+}

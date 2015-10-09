@@ -1,0 +1,42 @@
+{
+  "name": "mi/symfony-puli-bundle-plugins",
+  "description": "Extend BundleWithPlugins to use Puli as Class Discovery",
+  "license": "MIT",
+  "type": "library",
+  "keywords": [
+    "puli",
+    "symfony",
+    "plugin",
+    "bundle"
+  ],
+  "authors": [
+    {
+      "name": "Alexander Miehe",
+      "email": "alexander.miehe@movingimage.com"
+    }
+  ],
+  "minimum-stability": "beta",
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.0-dev"
+    }
+  },
+  "require": {
+    "php": ">=5.6.0",
+    "matthiasnoback/symfony-bundle-plugins": "^1.1",
+    "puli/discovery": "^1.0@beta"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^5.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Mi\\PuliBundlePlugins\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Mi\\PuliBundlePlugins\\Tests\\": "tests/"
+    }
+  }
+}
