@@ -23,12 +23,12 @@ abstract class ServiceBundlePlugin extends SimpleBundlePlugin implements Discove
     /**
      * @var Discovery
      */
-    private $discovery;
+    protected $discovery;
 
     /**
      * @var ResourceRepository
      */
-    private $repository;
+    protected $repository;
 
     /**
      * {@inheritdoc}
